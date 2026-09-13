@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { SettingsDialog } from "@/components/settings-dialog";
 
 const links = [
   { href: "/", label: "Dashboard" },
@@ -19,6 +19,9 @@ export function Nav() {
     <header className="border-b">
       <div className="mx-auto flex w-full max-w-4xl items-center justify-between px-4 py-4">
         <div className="flex items-center gap-6">
+          <span className="font-heading text-sm font-semibold">
+            Wealth Tracker
+          </span>
           {links.map((link) => {
             const isActive = pathname === link.href;
             return (
@@ -35,7 +38,7 @@ export function Nav() {
             );
           })}
         </div>
-        <ThemeToggle />
+        <SettingsDialog />
       </div>
     </header>
   );

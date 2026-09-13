@@ -127,4 +127,8 @@
   html {
     @apply font-sans;
   }
+  html[data-density="compact"] [data-slot="table-cell"],
+  html[data-density="compact"] [data-slot="table-head"] {
+    @apply h-auto py-1;
+  }
 }
