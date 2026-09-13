@@ -1,4 +1,5 @@
 import type { Holding } from "@prisma/client";
+import { TriangleAlertIcon } from "lucide-react";
 
 import {
   Table,
@@ -63,7 +64,17 @@ export function HoldingsTable({
                   {sharesFormat.format(holding.shares)}
                 </TableCell>
                 <TableCell className="text-right tabular-nums">
-                  {price != null ? currency.format(price) : "—"}
+                  {price != null ? (
+                    currency.format(price)
+                  ) : (
+                    <span
+                      className="inline-flex items-center gap-1 text-amber-600"
+                      title={`Price unavailable for "${holding.ticker}" — check that it's a valid Yahoo Finance ticker symbol`}
+                    >
+                      <TriangleAlertIcon className="size-3.5" />
+                      Unavailable
+                    </span>
+                  )}
                 </TableCell>
                 <TableCell className="text-right font-medium tabular-nums">
                   {marketValue != null ? currency.format(marketValue) : "—"}
