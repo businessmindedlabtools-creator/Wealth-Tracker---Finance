@@ -25,6 +25,7 @@ export async function createTransaction(input: TransactionInput) {
     },
   });
   revalidatePath("/transactions");
+  revalidatePath("/");
 }
 
 export async function updateTransaction(id: string, input: TransactionInput) {
@@ -40,9 +41,11 @@ export async function updateTransaction(id: string, input: TransactionInput) {
     },
   });
   revalidatePath("/transactions");
+  revalidatePath("/");
 }
 
 export async function deleteTransaction(id: string) {
   await prisma.transaction.delete({ where: { id } });
   revalidatePath("/transactions");
+  revalidatePath("/");
 }

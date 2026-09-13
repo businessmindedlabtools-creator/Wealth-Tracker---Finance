@@ -19,6 +19,7 @@ export async function createHolding(input: HoldingInput) {
     },
   });
   revalidatePath("/portfolio");
+  revalidatePath("/");
 }
 
 export async function updateHolding(id: string, input: HoldingInput) {
@@ -31,9 +32,11 @@ export async function updateHolding(id: string, input: HoldingInput) {
     },
   });
   revalidatePath("/portfolio");
+  revalidatePath("/");
 }
 
 export async function deleteHolding(id: string) {
   await prisma.holding.delete({ where: { id } });
   revalidatePath("/portfolio");
+  revalidatePath("/");
 }

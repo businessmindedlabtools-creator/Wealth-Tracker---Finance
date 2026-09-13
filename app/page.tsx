@@ -1,18 +1,35 @@
 import Link from "next/link";
 
-export default function Home() {
+import { getDashboardSummary } from "@/lib/dashboard";
+import { StatCard } from "@/components/dashboard/stat-card";
+import { ExpenseBreakdown } from "@/components/dashboard/expense-breakdown";
+
+export default async function Home() {
+  const summary = await getDashboardSummary();
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-4">
-      <h1 className="text-3xl font-semibold tracking-tight">Finance Tracker</h1>
-      <p className="text-muted-foreground">Coming soon.</p>
-      <div className="flex gap-4">
-        <Link href="/transactions" className="text-sm font-medium underline">
-          View Transactions
-        </Link>
-        <Link href="/portfolio" className="text-sm font-medium underline">
-          View Portfolio
-        </Link>
+    <div className="mx-auto w-full max-w-4xl px-4 py-10">
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+        <div className="flex gap-4 text-sm font-medium">
+          <Link href="/transactions" className="underline">
+            Transactions
+          </Link>
+          <Link href="/portfolio" className="underline">
+            Portfolio
+          </Link>
+        </div>
       </div>
+
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <StatCard label="Net Worth" value={summary.netWorth} />
+        <StatCard label="Cash Balance" value={summary.cashBalance} />
+        <StatCard label="Portfolio Value" value={summary.portfolioValue} />
+        <StatCard label="Total Income" value={summary.totalIncome} tone="positive" />
+        <StatCard label="Total Expenses" value={summary.totalExpenses} tone="negative" />
+      </div>
+
+      <ExpenseBreakdown categories={summary.expenseByCategory} />
     </div>
   );
 }
