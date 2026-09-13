@@ -1,4 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { LucideIcon } from "lucide-react";
+
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "cn";
 
 const currency = new Intl.NumberFormat("en-US", {
@@ -10,15 +12,22 @@ export function StatCard({
   label,
   value,
   tone = "default",
+  icon: Icon,
 }: {
   label: string;
   value: number;
   tone?: "default" | "positive" | "negative";
+  icon?: LucideIcon;
 }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-muted-foreground">{label}</CardTitle>
+        <CardTitle className="text-sm font-normal text-muted-foreground">{label}</CardTitle>
+        {Icon ? (
+          <CardAction>
+            <Icon className="size-4 text-muted-foreground" />
+          </CardAction>
+        ) : null}
       </CardHeader>
       <CardContent>
         <p

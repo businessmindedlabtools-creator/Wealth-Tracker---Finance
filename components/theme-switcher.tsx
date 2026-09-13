@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
-import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
+import { SunIcon, MoonIcon, MonitorIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -14,7 +14,7 @@ const icons = {
   system: MonitorIcon,
 };
 
-export function ThemeToggle() {
+export function ThemeSwitcher() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
