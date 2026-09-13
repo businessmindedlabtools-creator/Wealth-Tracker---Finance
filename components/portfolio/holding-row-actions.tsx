@@ -51,10 +51,10 @@ export function HoldingRowActions({ holding }: { holding: Holding }) {
           <span className="sr-only">Open menu</span>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem onSelect={() => setEditOpen(true)}>Edit</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setEditOpen(true)}>Edit</DropdownMenuItem>
           <DropdownMenuItem
             variant="destructive"
-            onSelect={() => setDeleteOpen(true)}
+            onClick={() => setDeleteOpen(true)}
           >
             Delete
           </DropdownMenuItem>
