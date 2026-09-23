@@ -1,11 +1,14 @@
 import { z } from "zod";
 
 import { TRANSACTION_TYPES, categoriesForType } from "@/lib/categories";
+import { moneyInCents } from "@/lib/validations/money";
 
 export const transactionSchema = z
   .object({
     type: z.enum(TRANSACTION_TYPES),
-    amount: z.coerce.number().positive("Amount must be greater than 0"),
+    amount: moneyInCents("Amount").refine((cents) => cents > 0, {
+      message: "Amount must be greater than 0",
+    }),
     category: z.string().min(1, "Category is required"),
     description: z
       .string()
@@ -18,6 +21,8 @@ export const transactionSchema = z
   .refine((data) => categoriesForType(data.type).includes(data.category), {
     message: "Select a category that matches the transaction type",
     path: ["category"],
-  });
+  })
+  // The form field is a money amount; the parsed output is integer cents.
+  .transform(({ amount, ...rest }) => ({ ...rest, amountCents: amount }));
 
 export type TransactionFormValues = z.infer<typeof transactionSchema>;

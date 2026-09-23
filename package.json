@@ -4,9 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && node scripts/prepare-db.mjs && prisma migrate deploy && next build",
+    "build": "prisma generate && node --env-file-if-exists=.env scripts/prepare-db.mjs && node --env-file-if-exists=.env scripts/backup-db.mjs --if-exists && prisma migrate deploy && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest run",
+    "db:backup": "node --env-file-if-exists=.env scripts/backup-db.mjs",
+    "db:restore": "node --env-file-if-exists=.env scripts/restore-db.mjs",
+    "auth:hash": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/hash-password.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
@@ -35,6 +39,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.5",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.2.7"
   }
 }

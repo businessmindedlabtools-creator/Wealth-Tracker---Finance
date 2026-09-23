@@ -31,7 +31,7 @@ export function AddHoldingDialog() {
         <HoldingForm
           submitLabel="Add"
           onCancel={() => setOpen(false)}
-          defaultValues={{ ticker: "", shares: "" }}
+          defaultValues={{ ticker: "", shares: "", costBasis: "" }}
           onSubmit={async (values) => {
             try {
               await createHolding(values);

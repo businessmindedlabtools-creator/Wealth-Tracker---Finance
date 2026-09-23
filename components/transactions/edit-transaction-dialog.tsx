@@ -12,6 +12,7 @@ import {
 import { TransactionForm } from "@/components/transactions/transaction-form";
 import { updateTransaction } from "@/app/transactions/actions";
 import type { TransactionType } from "@/lib/categories";
+import { centsToInputValue } from "@/lib/money";
 
 interface EditTransactionDialogProps {
   transaction: Transaction;
@@ -35,7 +36,7 @@ export function EditTransactionDialog({
           onCancel={() => onOpenChange(false)}
           defaultValues={{
             type: transaction.type as TransactionType,
-            amount: String(transaction.amount),
+            amount: centsToInputValue(transaction.amountCents),
             category: transaction.category,
             description: transaction.description ?? "",
             date: transaction.date.toISOString().slice(0, 10),

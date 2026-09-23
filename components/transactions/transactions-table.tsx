@@ -10,11 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { TransactionRowActions } from "@/components/transactions/transaction-row-actions";
-
-const currency = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-});
+import { formatCents } from "@/lib/money";
 
 const dateFormat = new Intl.DateTimeFormat("en-US", {
   year: "numeric",
@@ -67,7 +63,7 @@ export function TransactionsTable({ transactions }: { transactions: Transaction[
                 }`}
               >
                 {transaction.type === "INCOME" ? "+" : "-"}
-                {currency.format(transaction.amount)}
+                {formatCents(transaction.amountCents)}
               </TableCell>
               <TableCell>
                 <TransactionRowActions transaction={transaction} />

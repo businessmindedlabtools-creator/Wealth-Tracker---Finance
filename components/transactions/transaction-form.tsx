@@ -32,13 +32,8 @@ interface TransactionFormProps {
   defaultValues: TransactionFormRawValues;
   submitLabel: string;
   onCancel: () => void;
-  onSubmit: (values: {
-    type: TransactionType;
-    amount: number;
-    category: string;
-    description?: string;
-    date: Date;
-  }) => Promise<void>;
+  /** Receives the raw form values; the server action re-validates them. */
+  onSubmit: (values: TransactionFormRawValues) => Promise<void>;
 }
 
 export function TransactionForm({
@@ -61,7 +56,7 @@ export function TransactionForm({
       }
       return;
     }
-    await onSubmit(parsed.data);
+    await onSubmit(values);
   });
 
   return (

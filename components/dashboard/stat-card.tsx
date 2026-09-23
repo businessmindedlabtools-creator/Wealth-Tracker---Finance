@@ -2,22 +2,21 @@ import type { LucideIcon } from "lucide-react";
 
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "cn";
-
-const currency = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-});
+import { formatCents } from "@/lib/money";
 
 export function StatCard({
   label,
-  value,
+  valueCents,
   tone = "default",
   icon: Icon,
+  note,
 }: {
   label: string;
-  value: number;
+  valueCents: number;
   tone?: "default" | "positive" | "negative";
   icon?: LucideIcon;
+  /** Short warning shown under the value, e.g. when a total is incomplete. */
+  note?: string;
 }) {
   return (
     <Card>
@@ -37,8 +36,9 @@ export function StatCard({
             tone === "negative" && "text-destructive",
           )}
         >
-          {currency.format(value)}
+          {formatCents(valueCents)}
         </p>
+        {note ? <p className="mt-1 text-xs text-amber-600">{note}</p> : null}
       </CardContent>
     </Card>
   );

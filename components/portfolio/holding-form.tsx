@@ -5,18 +5,21 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { BASE_CURRENCY } from "@/lib/money";
 import { holdingSchema } from "@/lib/validations/holding";
 
 export interface HoldingFormRawValues {
   ticker: string;
   shares: string;
+  costBasis: string;
 }
 
 interface HoldingFormProps {
   defaultValues: HoldingFormRawValues;
   submitLabel: string;
   onCancel: () => void;
-  onSubmit: (values: { ticker: string; shares: number }) => Promise<void>;
+  /** Receives the raw form values; the server action re-validates them. */
+  onSubmit: (values: HoldingFormRawValues) => Promise<void>;
 }
 
 export function HoldingForm({
@@ -36,7 +39,7 @@ export function HoldingForm({
       }
       return;
     }
-    await onSubmit(parsed.data);
+    await onSubmit(values);
   });
 
   return (
@@ -73,6 +76,27 @@ export function HoldingForm({
             </p>
           )}
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="costBasis">Total cost in {BASE_CURRENCY} (optional)</Label>
+        <Input
+          id="costBasis"
+          type="number"
+          step="0.01"
+          min="0"
+          placeholder="0.00"
+          {...form.register("costBasis")}
+        />
+        {form.formState.errors.costBasis ? (
+          <p className="text-sm text-destructive">
+            {form.formState.errors.costBasis.message}
+          </p>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            What you paid for all shares, including fees. Used for gain/loss.
+          </p>
+        )}
       </div>
 
       <div className="flex justify-end gap-2 pt-2">

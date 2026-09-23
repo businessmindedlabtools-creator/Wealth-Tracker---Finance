@@ -1,55 +1,61 @@
+import { connection } from "next/server";
+
 import { prisma } from "@/lib/prisma";
-import { getPrices } from "@/lib/stock-price";
+import { getPortfolioValuation } from "@/lib/portfolio-data";
+
+// All amounts are integer cents of BASE_CURRENCY (lib/money.ts).
 
 export type CategoryTotal = {
   category: string;
-  total: number;
+  totalCents: number;
 };
 
 export type DashboardSummary = {
-  totalIncome: number;
-  totalExpenses: number;
-  cashBalance: number;
-  portfolioValue: number;
-  netWorth: number;
+  totalIncomeCents: number;
+  totalExpensesCents: number;
+  cashBalanceCents: number;
+  portfolioValueCents: number;
+  netWorthCents: number;
+  /** Holdings left out of portfolio value because no price (or FX rate) is available. */
+  unpricedHoldings: number;
+  /** Holdings valued with an expired cached price because the live fetch failed. */
+  stalePrices: number;
   expenseByCategory: CategoryTotal[];
 };
 
 export async function getDashboardSummary(): Promise<DashboardSummary> {
-  const [transactions, holdings] = await Promise.all([
+  // Always read at request time, never from a build-time prerender.
+  await connection();
+  const [transactions, portfolio] = await Promise.all([
     prisma.transaction.findMany(),
-    prisma.holding.findMany(),
+    getPortfolioValuation(),
   ]);
 
-  const totalIncome = transactions
+  const totalIncomeCents = transactions
     .filter((t) => t.type === "INCOME")
-    .reduce((sum, t) => sum + t.amount, 0);
-  const totalExpenses = transactions
+    .reduce((sum, t) => sum + t.amountCents, 0);
+  const totalExpensesCents = transactions
     .filter((t) => t.type === "EXPENSE")
-    .reduce((sum, t) => sum + t.amount, 0);
-  const cashBalance = totalIncome - totalExpenses;
-
-  const prices = await getPrices(holdings.map((h) => h.ticker));
-  const portfolioValue = holdings.reduce((sum, h) => {
-    const price = prices[h.ticker];
-    return sum + (price ?? 0) * h.shares;
-  }, 0);
+    .reduce((sum, t) => sum + t.amountCents, 0);
+  const cashBalanceCents = totalIncomeCents - totalExpensesCents;
 
   const expenseTotals = new Map<string, number>();
   for (const t of transactions) {
     if (t.type !== "EXPENSE") continue;
-    expenseTotals.set(t.category, (expenseTotals.get(t.category) ?? 0) + t.amount);
+    expenseTotals.set(t.category, (expenseTotals.get(t.category) ?? 0) + t.amountCents);
   }
   const expenseByCategory = [...expenseTotals.entries()]
-    .map(([category, total]) => ({ category, total }))
-    .sort((a, b) => b.total - a.total);
+    .map(([category, totalCents]) => ({ category, totalCents }))
+    .sort((a, b) => b.totalCents - a.totalCents);
 
   return {
-    totalIncome,
-    totalExpenses,
-    cashBalance,
-    portfolioValue,
-    netWorth: cashBalance + portfolioValue,
+    totalIncomeCents,
+    totalExpensesCents,
+    cashBalanceCents,
+    portfolioValueCents: portfolio.totalValueCents,
+    netWorthCents: cashBalanceCents + portfolio.totalValueCents,
+    unpricedHoldings: portfolio.unpricedCount,
+    stalePrices: portfolio.staleCount,
     expenseByCategory,
   };
 }

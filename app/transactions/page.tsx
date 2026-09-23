@@ -1,8 +1,14 @@
+import { connection } from "next/server";
+
+import { requireSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { AddTransactionDialog } from "@/components/transactions/add-transaction-dialog";
 import { TransactionsTable } from "@/components/transactions/transactions-table";
 
 export default async function TransactionsPage() {
+  await requireSession();
+  // Always read at request time, never from a build-time prerender.
+  await connection();
   const transactions = await prisma.transaction.findMany({
     orderBy: { date: "desc" },
   });

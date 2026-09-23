@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { HoldingForm } from "@/components/portfolio/holding-form";
 import { updateHolding } from "@/app/portfolio/actions";
+import { centsToInputValue } from "@/lib/money";
 
 interface EditHoldingDialogProps {
   holding: Holding;
@@ -35,6 +36,8 @@ export function EditHoldingDialog({
           defaultValues={{
             ticker: holding.ticker,
             shares: String(holding.shares),
+            costBasis:
+              holding.costBasisCents != null ? centsToInputValue(holding.costBasisCents) : "",
           }}
           onSubmit={async (values) => {
             try {

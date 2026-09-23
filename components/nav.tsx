@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, ArrowLeftRight, LineChart } from "lucide-react";
+import { LayoutDashboard, ArrowLeftRight, LineChart, LogOut } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import { logout } from "@/app/login/actions";
 
 const links = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -15,6 +17,10 @@ const links = [
 
 export function Nav() {
   const pathname = usePathname();
+
+  if (pathname === "/login") {
+    return null;
+  }
 
   return (
     <header className="border-b">
@@ -41,7 +47,15 @@ export function Nav() {
             );
           })}
         </div>
-        <ThemeSwitcher />
+        <div className="flex items-center gap-1">
+          <ThemeSwitcher />
+          <form action={logout}>
+            <Button type="submit" variant="ghost" size="icon" className="size-8" title="Sign out">
+              <LogOut className="size-4" />
+              <span className="sr-only">Sign out</span>
+            </Button>
+          </form>
+        </div>
       </div>
     </header>
   );

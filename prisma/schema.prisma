@@ -7,10 +7,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// All money amounts are stored as integer cents of the app's base currency
+// (EUR, see BASE_CURRENCY in lib/money.ts) to avoid floating-point
+// rounding errors.
+
 model Transaction {
   id          String   @id @default(cuid())
   type        String   // "INCOME" or "EXPENSE"
-  amount      Float
+  amountCents Int
   category    String
   description String?
   date        DateTime @default(now())
@@ -19,15 +23,19 @@ model Transaction {
 }
 
 model Holding {
-  id        String   @id @default(cuid())
-  ticker    String   // e.g., "AAPL"
-  shares    Float
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String   @id @default(cuid())
+  ticker         String   // e.g., "AAPL"
+  shares         Float
+  costBasisCents Int?     // total amount paid, in cents; null = unknown
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
+// Quote prices and FX rates are kept as floats: they are market rates with
+// sub-cent precision, not stored money amounts.
 model PriceCache {
   ticker    String   @id
-  price     Float
+  price     Float    // in major units of `currency` (e.g. GBP, not pence)
+  currency  String?
   updatedAt DateTime @default(now())
 }
